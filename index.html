@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--[if lte IE 6]><html class="preIE7 preIE8 preIE9"><![endif]-->
+<!--[if IE 7]><html class="preIE8 preIE9"><![endif]-->
+<!--[if IE 8]><html class="preIE9"><![endif]-->
+<!--[if gte IE 9]><!--><html><!--<![endif]-->
+  <head>
+		<meta charset="UTF-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  	<meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Marketplace</title>
+		<link href="node_modules/angular-material/angular-material.css" rel="stylesheet" type="text/css">
+		<link href="node_modules/mdi/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="css/style.css" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Spectral:400,600,800" rel="stylesheet">
+  </head>
+
+  <body ng-app="marketplace" ng-controller="marketplaceController">
+		
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<p><strong>P.N. Marketplace</strong></p>
+				<md-button ng-click="openSidebar()">
+					<md-icon class="mdi mdi-plus-circle"></md-icon>
+					New Listing
+				</md-button>
+				
+				<md-button ng-click="showSearch = true">
+					<md-icon class="mdi mdi-magnify"></md-icon>
+					Search
+				</md-button>
+				
+			</div>
+		</md-toolbar>
+		
+		<div class="filters" layout="row" layout-align="center top" ng-show="showSearch">
+			<md-input-container>
+				<label>Enter search term</label>
+				<input type="text" ng-model="listingsFilter">
+			</md-input-container>
+			
+			<md-input-container>
+				<label>Category</label>
+				<md-select ng-model="category">
+					<md-option ng-repeat="category in categories" value="{{category}}">
+						{{category}}
+				  </md-option>
+				</md-select>
+			</md-input-container>
+			
+			<div id="clearFilter">
+				<md-button class="md-warn" ng-click="listingsFilter= ''; category = ''">Clear</md-button>
+			</div>
+		</div>	
+		
+		<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="lockSideNav">
+			<md-toolbar>
+				<h1 class="md-toolbar-tools">{{editing ? "Edit" : "Add" }} Listing</h1>
+			</md-toolbar>
+			
+			<md-content layout-padding>
+				<form>
+          <md-input-container>
+            <label for="title">Title</label>
+            <input type="text" id="title"
+                   ng-model="listing.title" md-autofocus>
+          </md-input-container>
+          <md-input-container>
+            <label for="price">Price</label>
+            <input type="text" id="price"
+                 ng-model="listing.price">
+          </md-input-container>
+          <md-input-container>
+            <label for="description">Description</label>
+            <textarea type="text" id="description"
+                  ng-model="listing.description">
+            </textarea>
+          </md-input-container>
+          <md-input-container>
+            <label for="image">Image Link</label>
+            <input type="text" id="image"
+                  ng-model="listing.image">
+          </md-input-container>
+          <md-button ng-if="!editing" ng-click="saveListing(listing)" class="edit">
+            Save
+          </md-button>
+          <md-button ng-if="editing" ng-click="saveEdit()" class="edit">
+            Save Edit
+          </md-button>
+          <md-button ng-click="closeSidebar()" class="md-warn">
+            Cancel
+          </md-button>
+					
+        </form>
+			</md-content>
+		</md-sidenav>
+		
+		<md-content class="md-padding" layout="row" layout-wrap>
+			<md-card ng-repeat="listing in listings | filter: listingsFilter | filter: category" flex="30" flex-xs="100" class="listing">
+				<img class="md-card-image" ng-src="{{listing.image}}" alt="{{listing.title}}">
+				<md-card-content>
+					
+					
+					<div class="listing-info">
+						<h2 class="md-title">{{listing.title | uppercase}}</h2>
+						<p class="date">Posted on {{listing.posted | date}}</p>
+						<p class="price">{{listing.price | currency}}</p>
+						<p>{{listing.description}}</p>
+					</div>
+					
+					<div class="listing-contact" ng-show="showContact">
+						<p><md-icon class="mdi mdi-account"></md-icon>{{listing.contact.name}}</p>
+						<p><md-icon class="mdi mdi-phone"></md-icon>{{listing.contact.phone}}</p>
+						<p><md-icon class="mdi mdi-email"></md-icon>{{listing.contact.email}}</p>
+					</div>
+					
+					<div layout="row">
+						<md-button class="btn-blue" ng-click="showContact = !showContact">{{showContact ? "Hide" : "Contact"}}</md-button>
+						<md-button class="md-warn" ng-click="showAdmin = !showAdmin">{{showAdmin ? "Close" : "Admin"}}</md-button>
+					</div>
+					
+					<div class="listing-admin" ng-if="showAdmin">
+						<div layout="row">
+							<md-button class="edit" ng-click="editListing(listing)">Edit</md-button>
+							<md-button ng-click="deleteListing($event, listing)" class="md-warn">Delete</md-button>
+						</div>
+					</div>
+					
+				</md-card-content>
+			</md-card>
+		</md-content>
+		
+		<script src="node_modules/angular/angular.js"></script>
+		<script src="node_modules/angular-animate/angular-animate.js"></script>
+		<script src="node_modules/angular-aria/angular-aria.js"></script>
+		<script src="node_modules/angular-material/angular-material.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+		<script src="scripts/app.js"></script>
+		<script src="components/marketplace.controller.js"></script>
+		<script src="components/marketplace.factory.js"></script>
+  </body>
+</html>
